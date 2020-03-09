@@ -10,10 +10,13 @@ MCUFRIEND_kbv tft;
 #define MAGENTA 0xF81F
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
+#define PINK    0xF9FF
+
 
 // work in line numbers.  Font height in ht
 int16_t ht = 16, top = 1, line, lines = 29, scroll;
 int incomingByte = 0; // for incoming serial data
+int colorInterval = 0;
 
 void setup() {
   Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
@@ -22,7 +25,7 @@ void setup() {
   tft.begin(id);
   tft.setRotation(0);     //Portrait
   tft.fillScreen(BLACK);
-  tft.setTextColor(WHITE, BLACK);
+  tft.setTextColor(MAGENTA, BLACK);
   tft.setTextSize(2);     // System font is 8 pixels.  ht = 8*2=16
   tft.setCursor(100, 0);
   tft.print("ID = 0x");
@@ -36,7 +39,7 @@ void setup() {
     while (1);                    // die.
   }
   tft.setCursor(0, 0);
-  //  for (line = 1; line < 21; line++) tft.println(String(line) + ": ");
+  tft.setTextColor(CYAN, BLACK);
 }
 
 void loop() {
@@ -48,26 +51,15 @@ void loop() {
     // say what you got:
     Serial.print("I received: ");
     Serial.println(incomingByte, DEC);
-
-    
     tft.setCursor(0, (scroll + top) * ht);
     if (++scroll >= lines) scroll = 0;
     tft.vertScroll(top * ht, lines * ht, (scroll) * ht);
-    tft.print("I received: ");
+    tft.print("Received: ");
+    tft.setTextColor(GREEN, BLACK);
     tft.print(incomingByte, DEC);
-    tft.println();
-
+    tft.setTextColor(CYAN, BLACK);
+    tft.println("");
 
     line++;
   }
-  //
-  //    tft.setCursor(0, (scroll + top) * ht);
-  //    if (++scroll >= lines) scroll = 0;
-  //    tft.vertScroll(top * ht, lines * ht, (scroll) * ht);
-  //  //  tft.println(String(line) + ": [" + String(scroll) + "]  ");
-  //  if (line == 28) {
-  //    //    tft.println("-------------------------");
-  //  }
-  //  delay(300);
-  //  line++;
 }
