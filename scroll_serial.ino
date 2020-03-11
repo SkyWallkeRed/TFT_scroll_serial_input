@@ -14,82 +14,39 @@ MCUFRIEND_kbv tft;
 #define WHITE   0xFFFF
 #define PINK    0xF9FF
 
+
+#define BLACK           0x0000
+#define WHITE           0xFFFF
+#define BLUE            0x001F
+#define RED             0xF800
+#define GREEN           0x2685
+#define CYAN            0x07FF
+#define LIME            0x5FE0
+#define MAGENTA         0xF81F
+#define YELLOW          0xFFE0
+#define TURQUOISE       0x0F1B
+#define ORANGE          0xFBA0
+#define PINK            0xF813
+#define SKY             0x667F        // nice light blue
+#define GREY            0xE73C
+#define DarkTURQUOISE   0x3491
+#define DarkGREY        0x39C7
+#define DarkRED         0x8986
+#define DarkGREEN       0x3446
+#define DarkMAGENTA     0x612F
+#define DarkBLUE        0x298B
+#define DarkYELLOW      0x83E5
+#define DarkORANGE      0xA347
+#define DarkPINK        0xA1EF
+#define GOLD            0xF3FF00      //  nice yellow
+#define SALMON          0xFB2C        //  nice red
+
+
+
 int currLinePrint = 29;
+
 // work in line numbers.  Font height in ht
 int16_t ht = 16, top = 1, line, lines = 29, scroll;
 int incomingByte = 0; // for incoming serial data
 int incomingByte1 = 0; // for incoming serial data
 int colorInterval = 0;
-
-void setup() {
-  Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
-  Serial1.begin(9600); // opens serial port, sets data rate to 9600 bps
-
-  tft.reset();
-  uint16_t id = tft.readID();
-  tft.begin(id);
-  tft.setRotation(0);     //Portrait
-  tft.fillScreen(BLACK);
-  tft.setTextColor(RED, BLACK);
-  tft.setTextSize(2);     // System font is 8 pixels.  ht = 8*2=16
-  tft.setCursor(100, 0);
-  tft.print("ID = 0x");
-  tft.println(id, HEX);
-  delay(500);
-  tft.setCursor(100, 0);
-  tft.setTextColor(MAGENTA, BLACK);
-  tft.print(" Kinzy Tech ");
-  if (id == 0x9320 || id == 0x9325 || id == 0xB509) { //0x9486
-    top = 0;                      // these controllers scroll full screen
-    lines = tft.height() / ht;    // we are in portrait mode
-  }
-  if (id == 0x7783) {
-    tft.println("can NOT scroll");
-    while (1);                    // die.
-  }
-  tft.setCursor(10, 0);
-
-}
-
-void loop() {
-  // send data only when you receive data:
-  if (Serial.available() > 0) {
-    // read the incoming byte:
-    incomingByte = Serial.read();
-    
-    if (currLinePrint > 18) {
-      tft.setCursor(0, (scroll + top) * ht);
-      if (++scroll >= lines) scroll = 0;
-      tft.setTextColor(YELLOW, BLACK);
-      tft.vertScroll(top * ht, lines * ht, (scroll) * ht);
-      tft.print(">");
-      line++;
-      currLinePrint = 0;
-    }
-
-    tft.setTextColor(RED, BLACK);
-
-    tft.print(char(incomingByte));
-    currLinePrint++;
-  }
-
-  if (Serial1.available() > 0) {
-    // read the incoming byte:
-    incomingByte1 = Serial1.read();
-
-    if (currLinePrint > 18) {
-      tft.setCursor(0, (scroll + top) * ht);
-      if (++scroll >= lines) scroll = 0;
-      tft.setTextColor(CYAN, BLACK);
-      tft.vertScroll(top * ht, lines * ht, (scroll) * ht);
-      tft.print(">");
-      line++;
-      currLinePrint = 0;
-    }
-
-    tft.setTextColor(GREEN, BLACK);
-
-    tft.print(char(incomingByte1));
-    currLinePrint++;
-  }
-}
